@@ -49,6 +49,86 @@
         </div>
     </div>
 
+	
+<script>
+(function(){
+  // 4x speed (duration × 0.25)
+  const speedFactor = 0.25;
+
+  function scaleTimeValue(val) {
+    if (!val) return val;
+    return val.split(',').map(v => {
+      v = v.trim();
+      if (v.endsWith('ms')) {
+        const n = parseFloat(v.slice(0,-2));
+        return Math.max(1, Math.round(n * speedFactor)) + 'ms';
+      }
+      if (v.endsWith('s')) {
+        const n = parseFloat(v.slice(0,-1));
+        return (Math.max(0.001, n * speedFactor)).toFixed(3).replace(/\.?0+$/,'') + 's';
+      }
+      return v;
+    }).join(', ');
+  }
+
+  const all = document.querySelectorAll('*');
+  all.forEach(el => {
+    try {
+      const cs = getComputedStyle(el);
+      const map = {
+        animationDuration: 'animation-duration',
+        animationDelay: 'animation-delay',
+        transitionDuration: 'transition-duration',
+        transitionDelay: 'transition-delay'
+      };
+      Object.keys(map).forEach(prop => {
+        const cur = cs[prop];
+        if (cur && cur !== '0s') {
+          el.style.setProperty(map[prop], scaleTimeValue(cur), 'important');
+        }
+      });
+    } catch(e){}
+  });
+
+  const root = document.documentElement;
+  const rs = getComputedStyle(root);
+  for (let i=0; i<rs.length; i++) {
+    const name = rs[i];
+    const val = rs.getPropertyValue(name).trim();
+    if (!val) continue;
+    if ((name.toLowerCase().includes('duration') || name.toLowerCase().includes('time') || name.toLowerCase().includes('speed'))
+        && (val.endsWith('s') || val.endsWith('ms'))) {
+      try { root.style.setProperty(name, scaleTimeValue(val)); } catch(e){}
+    }
+  }
+
+  const origSetTimeout = window.setTimeout.bind(window);
+  const origSetInterval = window.setInterval.bind(window);
+  window.setTimeout = function(fn, t, ...args) {
+    if (typeof t !== 'number') return origSetTimeout(fn, t, ...args);
+    return origSetTimeout(fn, Math.max(1, Math.round(t * speedFactor)), ...args);
+  };
+  window.setInterval = function(fn, t, ...args) {
+    if (typeof t !== 'number') return origSetInterval(fn, t, ...args);
+    return origSetInterval(fn, Math.max(1, Math.round(t * speedFactor)), ...args);
+  };
+
+  requestAnimationFrame(() => {
+    all.forEach(el => {
+      try {
+        const a = el.style.animation;
+        if (a) {
+          el.style.animation = 'none';
+          void el.offsetWidth;
+          el.style.animation = '';
+        }
+      } catch(e){}
+    });
+  });
+})();
+</script>
+	
+
     <script>
     (function() {
         var canvas = $('#canvas');
