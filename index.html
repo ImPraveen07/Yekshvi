@@ -4,6 +4,34 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>HBD Rashi</title>	    
     <link type="text/css" rel="stylesheet" href="./file/default.css">
+
+	<style>
+  /* 2. Paragraph spacing */
+  .say {
+    display: block;
+    margin-bottom: 18px;
+    line-height: 1.45;
+  }
+
+  /* Move text slightly right (you already used this value) */
+  #text {
+    padding-left: 55px;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Safer width so it does NOT touch the heart */
+  #code {
+    max-width: 350px !important;
+    line-height: 1.5;
+  }
+
+  /* 3. Make text more visible */
+  #code, .say {
+    color: #ffffff !important;
+    text-shadow: 0 0 8px rgba(0,0,0,0.9) !important;
+  }
+	</style>
     <script type="text/javascript" src="./file/jquery.min.js"></script>
     <script type="text/javascript" src="./file/jscex.min.js"></script>
     <script type="text/javascript" src="./file/jscex-parser.js"></script>
