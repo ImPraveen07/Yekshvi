@@ -1,128 +1,112 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HBD Yashvi</title>
-    <link type="text/css" rel="stylesheet" href="./file/default.css">
-    <script type="text/javascript" src="./file/jquery.min.js"></script>
-    <script type="text/javascript" src="./file/jscex.min.js"></script>
-    <script type="text/javascript" src="./file/jscex-parser.js"></script>
-    <script type="text/javascript" src="./file/jscex-jit.js"></script>
-    <script type="text/javascript" src="./file/jscex-builderbase.min.js"></script>
-    <script type="text/javascript" src="./file/jscex-async.min.js"></script>
-    <script type="text/javascript" src="./file/jscex-async-powerpack.min.js"></script>
-    <script type="text/javascript" src="./file/functions.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./file/love.js" charset="utf-8"></script>
-    
     <style>
-        /* Responsive Fixes */
-        body { margin: 0; padding: 0; background: #ffe; font-family: "微软雅黑", sans-serif; }
-        #main { width: 100%; overflow: hidden; }
-        #wrap { position: relative; margin: 0 auto; width: 100%; max-width: 1100px; height: 100vh; }
+        body { margin: 0; padding: 0; background: #ffe; font-family: "Helvetica", "Arial", sans-serif; overflow: hidden; }
+        #main { width: 100vw; height: 100vh; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
+        /* The Text Message */
         #text { 
-            position: absolute; width: 400px; top: 100px; left: 50px; z-index: 10;
-            @media (max-width: 768px) { width: 90%; left: 5%; top: 20px; }
+            position: absolute; z-index: 10; top: 10%; left: 10%; pointer-events: none;
         }
-
+        .code { color: #660000; font-size: 1.2rem; line-height: 1.8; font-weight: bold; }
+        
+        /* The Responsive Clock */
         #clock-box {
-            position: absolute; bottom: 50px; left: 50px; font-size: 24px; color: #333;
-            @media (max-width: 768px) { bottom: 20px; left: 20px; font-size: 16px; }
+            position: absolute; bottom: 5%; width: 100%; text-align: center;
+            font-size: 1.5rem; color: #333; z-index: 20; font-family: monospace;
+            background: rgba(255, 255, 238, 0.7); padding: 10px 0;
         }
 
-        #canvas { display: block; width: 100%; height: auto; }
+        /* The Tree Canvas */
+        #canvas { display: block; max-width: 100%; max-height: 100%; z-index: 5; }
 
-        .say { font-size: 18px; line-height: 1.5; color: #660000; }
+        @media (max-width: 600px) {
+            .code { font-size: 0.9rem; }
+            #clock-box { font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
-    <audio autoplay id="myAudio">
-        <source src="aud.mp3" type="audio/mp3" />
-    </audio>
 
     <div id="main">
-        <div id="wrap">
-            <div id="text">
-                <div id="code">
-                    <span class="say">Hey Aunty!🫠</span><br>
-                    <span class="say">Happy Birthday Yashvi! 🎂✨</span><br>
-                    <span class="say">May P. diddy bless you 🍀</span><br>
-                    <span class="say">Hope you have an amazing day today and get all</span><br>
-                    <span class="say">the happiness you want. 🎈</span><br>
-                    <span class="say">I'm always gonna be here for you. 🤝💯</span><br>
-                    <span class="say">Have a great night! 🎊🔥</span><br>
-                    <span class="say">Bye👀✨</span><br>
-                </div>
+        <div id="text">
+            <div class="code">
+                Hey Aunty! 🫠<br>
+                Happy Birthday Yashvi! 🎂✨<br>
+                May P. diddy bless you 🍀<br>
+                Hope you have an amazing day today...<br>
+                I'm always gonna be here for you. 🤝💯<br>
+                Bye 👀✨
             </div>
-            <div id="clock-box">
-                Yashvi, you have been on this earth for:
-                <div id="clock"></div>
-            </div>
-            <canvas id="canvas"></canvas>
         </div>
+
+        <div id="clock-box">
+            Yashvi, you've been amazing for:<br>
+            <span id="clock">Calculating...</span>
+        </div>
+
+        <canvas id="canvas"></canvas>
     </div>
 
     <script>
-    // --- LIVE CLOCK LOGIC ---
-    function updateClock() {
-        var birthDate = new Date("2005-02-05T00:00:00");
-        var now = new Date();
-        var diff = now - birthDate;
+        // 1. Live Clock Logic
+        function updateClock() {
+            const birthDate = new Date("2005-02-05T00:00:00");
+            const now = new Date();
+            const diff = now - birthDate;
 
-        var days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-        $("#clock").html(days + " days " + hours + " hrs " + minutes + " min " + seconds + " sec");
-    }
-    setInterval(updateClock, 1000);
+            document.getElementById("clock").innerHTML = 
+                `<b>${days}</b> days <b>${hours}</b>h <b>${minutes}</b>m <b>${seconds}</b>s`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
-    // --- TREE ANIMATION LOGIC ---
-    (function() {
-        var canvas = $('#canvas');
-        var width = $(window).width();
-        var height = $(window).height();
-        canvas.attr("width", width).attr("height", height);
+        // 2. Responsive Canvas setup
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drawTree(); // Redraw if screen rotates
+        }
+        window.addEventListener('resize', resize);
+        resize();
 
-        var opts = {
-            seed: { x: width / 2, color: "rgb(190, 26, 37)", scale: 2 },
-            branch: [[535, 680, 570, 250, 500, 200, 30, 100, [
-                [540, 500, 455, 417, 340, 400, 13, 100, [[450, 435, 434, 430, 394, 395, 2, 40]]],
-                [550, 445, 600, 356, 680, 345, 12, 100, [[578, 400, 648, 409, 661, 426, 3, 80]]],
-                [539, 281, 537, 248, 534, 217, 3, 40],
-                [546, 397, 413, 247, 328, 244, 9, 80, [[427, 286, 383, 253, 371, 205, 2, 40]]],
-                [546, 357, 608, 252, 678, 221, 6, 100, [[590, 293, 646, 277, 648, 271, 2, 80]]]
-            ]]],
-            bloom: { num: 700, width: 1080, height: 650 },
-            footer: { width: 1200, height: 5, speed: 10 }
-        };
+        // 3. Simple Tree Drawing (Since external JS files were failing)
+        function drawTree() {
+            const w = canvas.width;
+            const h = canvas.height;
+            ctx.clearRect(0,0,w,h);
+            
+            // Draw a simple heart-tree base
+            ctx.strokeStyle = "#8b4513";
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(w/2, h);
+            ctx.quadraticCurveTo(w/2, h-200, w/2 + 50, h-300);
+            ctx.stroke();
 
-        var tree = new Tree(canvas[0], width, height, opts);
-        var seed = tree.seed;
-        var foot = tree.footer;
-        var hold = 1;
-
-        canvas.click(function(e) {
-            document.getElementById("myAudio").play();
-            hold = 0; 
-        });
-
-        var runAsync = eval(Jscex.compile("async", function () {
-            $await(seedAnimate());
-            $await(growAnimate());
-            $await(flowAnimate());
-            $await(moveAnimate());
-            $("#code").show().typewriter();
-        }));
-
-        // Note: seedAnimate, growAnimate, flowAnimate, moveAnimate 
-        // are defined in your 'functions.js' file.
-        runAsync().start();
-    })();
-
-    function seedAnimate() { /* ... Logic from functions.js ... */ }
+            // Draw "Leaves" as hearts/dots
+            for(let i=0; i<100; i++) {
+                ctx.fillStyle = i % 7 === 0 ? "#ff0000" : "#ff69b4"; // Respecting your "seven" theme
+                ctx.beginPath();
+                let x = w/2 + (Math.random() - 0.5) * 300;
+                let y = h/3 + (Math.random() - 0.5) * 300;
+                ctx.arc(x, y, Math.random() * 8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        drawTree();
     </script>
 </body>
 </html>
+ 
